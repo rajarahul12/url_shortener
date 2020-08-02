@@ -12,6 +12,12 @@ app.use(express.json());
 app.use("/", require("./routes/index"));
 app.use("/api/url", require("./routes/url"));
 
+app.use("/test", (req, res) => {
+  res.json({
+    status: "Working",
+  });
+});
+
 const PORT = process.env.PORT;
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
