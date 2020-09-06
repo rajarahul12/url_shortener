@@ -4,6 +4,8 @@ const router = express.Router();
 const Url = require("../models/Url");
 const UrlInfo = require("../models/UrlInfo");
 
+// @route     GET /urlinfo
+// @desc      gets the urlinfo object
 router.get("/urlinfo", async (req, res) => {
   try {
     let urlInfo = await UrlInfo.findOne({ name: "UrlInfo" });
