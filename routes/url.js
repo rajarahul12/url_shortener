@@ -5,6 +5,7 @@ const shortid = require("shortid");
 const config = require("config");
 
 const Url = require("../models/Url");
+const UrlInfo = require("../models/UrlInfo");
 
 // @route     POST /api/url/shorten
 // @desc      Create short URL
@@ -29,6 +30,19 @@ router.post("/shorten", async (req, res) => {
     try {
       let url = await Url.findOne({ longUrl });
 
+      let urlInfo = await UrlInfo.findOne({ name: "UrlInfo" });
+      if (urlInfo) {
+        console.log("-----> Found urlinfo");
+      } else {
+        console.log("-----> Create a collection");
+        urlInfo = new UrlInfo({
+          urlsCreated: 0,
+          urlHits: 0,
+          name: "UrlInfo",
+        });
+        await urlInfo.save();
+      }
+
       if (url) {
         res.json(url);
       } else {
@@ -42,6 +56,23 @@ router.post("/shorten", async (req, res) => {
         });
 
         await url.save();
+
+        // Update the URLInfo Collection
+        let newURLInfo = {
+          urlsCreated: urlInfo.urlsCreated + 1,
+          urlHits: urlInfo.urlHits,
+          name: "UrlInfo",
+        };
+
+        UrlInfo.findOneAndUpdate({ name: "UrlInfo" }, newURLInfo, function (
+          err,
+          doc
+        ) {
+          if (err) {
+            console.log("Error Updating fields");
+          }
+          console.log("Updated urlsCreated");
+        });
 
         res.json(url);
       }
